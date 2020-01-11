@@ -23,10 +23,13 @@ import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERE
 
 import static com.android.launcher3.OverlayCallbackImpl.KEY_ENABLE_MINUS_ONE;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
@@ -54,6 +57,8 @@ import com.android.launcher3.LauncherFiles;
 import com.android.launcher3.LauncherPrefs;
 import com.android.launcher3.R;
 import com.android.launcher3.Utilities;
+import com.android.launcher3.customization.IconDatabase;
+import com.android.launcher3.icons.pack.IconPackSettingsActivity;
 import com.android.launcher3.config.FeatureFlags;
 import com.android.launcher3.model.WidgetsModel;
 import com.android.launcher3.states.RotationHelper;
@@ -190,7 +195,8 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
     /**
      * This fragment shows the launcher preferences.
      */
-    public static class LauncherSettingsFragment extends PreferenceFragmentCompat {
+    public static class LauncherSettingsFragment extends PreferenceFragmentCompat implements
+            SharedPreferences.OnSharedPreferenceChangeListener {
 
         private String mHighLightKey;
         private boolean mPreferenceHighlighted = false;
@@ -215,6 +221,20 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
             getPreferenceManager().setSharedPreferencesName(LauncherFiles.SHARED_PREFERENCES_KEY);
             setPreferencesFromResource(R.xml.launcher_preferences, rootKey);
 
+            updatePreferences();
+
+            Utilities.getPrefs(getContext())
+                    .registerOnSharedPreferenceChangeListener(this);
+        }
+
+        @Override
+        public void onDestroyView () {
+            Utilities.getPrefs(getContext())
+                .unregisterOnSharedPreferenceChangeListener(this);
+            super.onDestroyView();
+        }
+
+        private void updatePreferences() {
             PreferenceScreen screen = getPreferenceScreen();
             for (int i = screen.getPreferenceCount() - 1; i >= 0; i--) {
                 Preference preference = screen.getPreference(i);
@@ -261,6 +281,15 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
             outState.putBoolean(SAVE_HIGHLIGHTED_KEY, mPreferenceHighlighted);
         }
 
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+            switch (key) {
+                case IconDatabase.KEY_ICON_PACK:
+                    updatePreferences();
+                    break;
+            }
+        }
+
         protected String getParentKeyForPref(String key) {
             return null;
         }
@@ -296,6 +325,10 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                 case KEY_ENABLE_MINUS_ONE:
                     mShowGoogleAppPref = preference;
                     updateIsGoogleAppEnabled();
+                    return true;
+
+                case IconDatabase.KEY_ICON_PACK:
+                    setupIconPackPreference(preference);
                     return true;
             }
 
@@ -384,5 +417,18 @@ public class SettingsActivity extends CollapsingToolbarBaseActivity
                 }
             });
         }
+
+        private void setupIconPackPreference(Preference preference) {
+            final String pkgLabel = IconDatabase.getGlobalLabel(getActivity());
+            preference.setSummary(pkgLabel);
+            preference.setOnPreferenceClickListener(p -> {
+                startActivity(new Intent(getActivity(), IconPackSettingsActivity.class));
+                return true;
+            });
+        }
+    }
+
+    public interface OnResumePreferenceCallback {
+        void onResume();
     }
 }
