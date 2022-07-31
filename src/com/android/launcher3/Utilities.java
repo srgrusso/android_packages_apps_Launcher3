@@ -151,6 +151,7 @@ public final class Utilities {
 
     public static final String KEY_DOCK_SEARCH = "pref_dock_search";
     public static final String GSA_PACKAGE = "com.google.android.googlequicksearchbox";
+    public static final String ASI_PACKAGE = "com.google.android.as";
     public static final String LENS_ACTIVITY = "com.google.android.apps.lens.MainActivity";
     public static final String LENS_URI = "google://lens";
     public static final String LENS_SHARE_ACTIVITY = "com.google.android.apps.search.lens.LensShareEntryPointActivity";
@@ -784,6 +785,14 @@ public final class Utilities {
         }
     }
 
+    public static boolean isASIEnabled(Context context) {
+        try {
+            return context.getPackageManager().getApplicationInfo(ASI_PACKAGE, 0).enabled;
+        } catch (PackageManager.NameNotFoundException e) {
+            return false;
+        }
+    }
+
     public static boolean isDoubleTapGestureEnabled(Context context) {
         SharedPreferences prefs = LauncherPrefs.getPrefs(context.getApplicationContext());
         return prefs.getBoolean(KEY_DT_GESTURE, true);
@@ -804,7 +813,7 @@ public final class Utilities {
     }
 
     public static boolean showSmartspace(Context context) {
-        return isGSAEnabled(context) && isSmartspaceEnabled(context);
+        return isGSAEnabled(context) && isASIEnabled(context) && isSmartspaceEnabled(context);
     }
 
     private static boolean isSmartspaceEnabled(Context context) {
