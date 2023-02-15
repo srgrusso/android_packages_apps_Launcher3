@@ -20,6 +20,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.Rect;
+import android.media.MediaPlayer;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -41,15 +42,18 @@ import com.android.launcher3.util.MultiValueAlpha;
 import com.android.launcher3.util.NavigationMode;
 import com.android.quickstep.TaskOverlayFactory.OverlayUICallbacks;
 import com.android.quickstep.util.LayoutUtils;
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
+
+import java.util.ArrayList;
 
 /**
  * View for showing action buttons in Overview
  */
 public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayout
         implements OnClickListener, Insettable, SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private MediaPlayer mMediaPlayer;
 
     private final Rect mInsets = new Rect();
 
@@ -97,6 +101,13 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
     private static final String KEY_RECENTS_SCREENSHOT = "pref_recents_screenshot";
     private static final String KEY_RECENTS_CLEAR_ALL = "pref_recents_clear_all";
     private static final String KEY_RECENTS_LENS = "pref_recents_lens";
+    private static final String KEY_CLEAR_ALL_SOUNDS = "clear_all_sounds";
+
+    private static final int[] CLEAR_ALL_SOUNDS = {
+        R.raw.op_clear_all,
+        R.raw.tissue_swipe,
+        R.raw.soft_pop,
+    };
 
     private MultiValueAlpha mMultiValueAlpha;
     private Button mSplitButton;
@@ -139,6 +150,7 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         mClearAll = prefs.getBoolean(KEY_RECENTS_CLEAR_ALL, true);
         mLens = prefs.getBoolean(KEY_RECENTS_LENS, false);
         prefs.registerOnSharedPreferenceChangeListener(this);
+        mMediaPlayer = MediaPlayer.create(context, CLEAR_ALL_SOUNDS[0]);
     }
 
     @Override
@@ -189,6 +201,8 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         } else if (id == R.id.action_split) {
             mCallbacks.onSplit();
         } else if (id == R.id.action_clear_all) {
+            // Play a dismiss sound
+            playClearAllSound();
             mCallbacks.onClearAllTasksRequested();
         } else if (id == R.id.action_lens) {
             mCallbacks.onLens();
@@ -228,6 +242,12 @@ public class OverviewActionsView<T extends OverlayUICallbacks> extends FrameLayo
         }
         boolean isHidden = mHiddenFlags != 0;
         mMultiValueAlpha.get(INDEX_HIDDEN_FLAGS_ALPHA).setValue(isHidden ? 0 : 1);
+    }
+
+    public void playClearAllSound() {
+        if (mMediaPlayer != null) {
+            mMediaPlayer.start();
+        }
     }
 
     /**
