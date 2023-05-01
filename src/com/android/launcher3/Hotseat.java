@@ -29,7 +29,7 @@ import android.widget.FrameLayout;
 
 import com.android.launcher3.util.ShakeUtils;
 
-import com.android.internal.util.voltage.VoltageUtils;
+import com.android.internal.util.bliss.BlissUtils;
 
 import androidx.annotation.Nullable;
 
@@ -246,7 +246,7 @@ public class Hotseat extends CellLayout implements Insettable, ShakeUtils.OnShak
     public void onShake(double speed) {
     	boolean mGestureEnabled = Utilities.homeScreenShakeTorch(getContext());
         if (!mGestureEnabled) return;
-        VoltageUtils.toggleCameraFlash();
+        BlissUtils.toggleCameraFlash();
     }
 
 }
