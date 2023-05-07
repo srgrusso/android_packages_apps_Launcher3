@@ -207,7 +207,7 @@
             android:autoRemoveFromRecents="true" />
 
         <activity
-            android:name="com.android.launcher3.blaze.icon.IconPackSettingsActivity"
+            android:name="com.android.launcher3.bliss.icon.IconPackSettingsActivity"
             android:label="@string/icon_pack_title"
             android:theme="@style/HomeSettings.Theme"
             android:exported="true"

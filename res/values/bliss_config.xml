@@ -32,7 +32,7 @@
     <string name="recents_settings_fragment_name" translatable="false">com.android.launcher3.settings.SettingsRecents$RecentsSettingsFragment</string>
 
     <!-- Icon pack -->
-    <string name="icon_pack_settings_class" translatable="false">com.android.launcher3.blaze.icon.IconPackSettingsFragment</string>
+    <string name="icon_pack_settings_class" translatable="false">com.android.launcher3.bliss.icon.IconPackSettingsFragment</string>
 
     <!-- Whether to place memory info below action buttons. -->
     <bool name="config_placeMemInfoBelowActions">true</bool>

@@ -31,7 +31,7 @@ import com.google.android.systemui.smartspace.BcSmartspaceDataProvider;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class BlazeLauncher extends QuickstepLauncher {
+public class BlissLauncher extends QuickstepLauncher {
     private BcSmartspaceDataProvider mSmartspacePlugin = new BcSmartspaceDataProvider();
     private LauncherUnlockAnimationController mUnlockAnimationController =
             new LauncherUnlockAnimationController(this);
